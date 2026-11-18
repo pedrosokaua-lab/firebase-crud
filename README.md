@@ -52,3 +52,20 @@ A coleção "alunos" contém documentos com o seguinte estrutura:
 - O arquivo `serviceAccountKey.json` NÃO deve ser publicado no GitHub
 - O `.gitignore` já inclui `serviceAccountKey.json` e `node_modules/`
 - Dados fictícios são utilizados nas demonstrações
+
+## Links para Entrega no Google Sala de Aula
+
+**Link do Repositório GitHub:**
+https://github.com/pedrosokaua-lab/firebase-crud
+
+**Link da Aplicação Web:**
+Abra o arquivo: `web-crud.html` em qualquer navegador
+
+**Instruções de Execução:**
+1. Terminal: `node index.js` (após `npm install`)
+2. Web: Abra `web-crud.html` no navegador (configure as credenciais Firebase)
+
+**Prints Necessários para Entrega:**
+- Print do terminal executando `node index.js` com o menu CRUD
+- Print da interface web (`web-crud.html`) funcionando
+- Print das consultas por turma e data de nascimento
