@@ -3,11 +3,6 @@
 ## Descrição
 Aplicação de linha de comando para operações CRUD (Create, Read, Update, Delete) no Firestore do Firebase, com consultas por turma e data de nascimento.
 
-## Pré-requisitos
-
-1. Conta no Google (conta Firebase)
-2. Node.js instalado (versão 14+)
-
 ## Configuração do Firebase
 
 1. Acesse https://console.firebase.google.com/
@@ -18,7 +13,6 @@ Aplicação de linha de comando para operações CRUD (Create, Read, Update, Del
    - Clique em "Gerar nova chave privada"
    - Salve o arquivo JSON como `serviceAccountKey.json` neste diretório
 
-## Executando a aplicação
 
 1. Instale as dependências:
    ```
@@ -46,9 +40,3 @@ A coleção "alunos" contém documentos com o seguinte estrutura:
 - turma: string
 - nascimento: timestamp (data de nascimento)
 - criadoEm: timestamp (data de criação)
-
-## Observações
-
-- O arquivo `serviceAccountKey.json` NÃO deve ser publicado no GitHub
-- O `.gitignore` já inclui `serviceAccountKey.json` e `node_modules/`
-- Dados fictícios são utilizados nas demonstrações
