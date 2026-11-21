@@ -1,71 +1,164 @@
-# Firebase CRUD com Admin SDK
+# CRUD de Alunos com Firebase Admin SDK
 
-## Descrição
-Aplicação de linha de comando para operações CRUD (Create, Read, Update, Delete) no Firestore do Firebase, com consultas por turma e data de nascimento.
+Projeto da atividade: criar projeto no Firebase, habilitar o Firestore, configurar a conexão com o Firebase Admin SDK e implementar operações CRUD de alunos com **menu no terminal**, incluindo consultas por turma e por data de nascimento.
 
-## Pré-requisitos
+## Requisitos atendidos
 
-1. Conta no Google (conta Firebase)
-2. Node.js instalado (versão 14+)
+| Requisito da atividade | Onde está |
+|---|---|
+| Criar projeto no Firebase e habilitar o Firestore | Projeto `crud-alunos-5c785`, Firestore ativo |
+| Configurar conexão com o Firebase Admin SDK | `index.js` (`admin.initializeApp` + `serviceAccountKey.json`) |
+| **CREATE** – cadastrar aluno | Opção 1 do menu |
+| **READ** – listar alunos | Opção 2 do menu |
+| **UPDATE** – atualizar aluno | Opção 3 do menu |
+| **DELETE** – excluir aluno | Opção 4 do menu |
+| Consulta por turma | Opção 5 do menu |
+| Consulta por data de nascimento | Opção 6 do menu (por ano ou data exata) |
+| Menu no terminal | `index.js` |
+| Dados fictícios | Opção 7 e `popular-dados.js` |
+| Não publicar `serviceAccountKey.json` | `.gitignore` |
 
-## Configuração do Firebase
+## Arquivos do projeto
 
-1. Acesse https://console.firebase.google.com/
-2. Crie um novo projeto Firebase
-3. No console, vá em "Firestore Database" e crie um banco de dados
-4. Baixe a chave de serviço (Service Account Key):
-   - Vá em Configurações (ícone de engrenagem) > Contas de serviço
-   - Clique em "Gerar nova chave privada"
-   - Salve o arquivo JSON como `serviceAccountKey.json` neste diretório
+| Arquivo | Função |
+|---|---|
+| `index.js` | Aplicação principal: menu CRUD no terminal (usa `readline`, funciona no Node.js) |
+| `testar-conexao.js` | Testa a conexão com o Firestore e mostra erros comuns |
+| `popular-dados.js` | Cadastra 6 alunos fictícios de exemplo |
+| `web-crud.html` | Interface web opcional (Firebase Client SDK) |
+| `package.json` | Dependências (`firebase-admin`, `@google-cloud/firestore`) |
+| `.gitignore` | Impede o envio de `serviceAccountKey.json` e `node_modules/` ao GitHub |
+| `serviceAccountKey.json` | Chave de serviço do Firebase (**arquivo local, nunca versionar**) |
 
-## Executando a aplicação
+## Executando no terminal
 
-1. Instale as dependências:
-   ```
+1. Instale as dependências (apenas na primeira vez):
+
+   ```bash
    npm install
    ```
 
-2. Execute a aplicação:
+2. Teste a conexão (opcional):
+
+   ```bash
+   node testar-conexao.js
    ```
+
+3. Se quiser popular com alunos fictícios:
+
+   ```bash
+   node popular-dados.js
+   ```
+
+4. Abra o menu:
+
+   ```bash
    node index.js
    ```
 
-3. Siga o menu no terminal:
-   - 1: Cadastrar aluno
-   - 2: Listar alunos
-   - 3: Atualizar aluno
-   - 4: Excluir aluno
-   - 5: Listar alunos por turma
-   - 6: Listar alunos por data de nascimento
-   - 0: Sair
+## Menu disponível
 
-## Estrutura de dados do Firestore
+```
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+```
 
-A coleção "alunos" contém documentos com o seguinte estrutura:
-- nome: string
-- turma: string
-- nascimento: timestamp (data de nascimento)
-- criadoEm: timestamp (data de criação)
+### Exemplos de uso
 
-## Observações
+- **Cadastrar (1):** informe nome, turma (ex.: `1º Ano A`) e nascimento (`2009-03-12` ou `12/03/2009`).
+- **Listar (2):** mostra todos os alunos da coleção `alunos` com ID, nome, turma e nascimento.
+- **Atualizar (3):** informe o ID shown na listagem e os novos valores (deixe em branco para manter).
+- **Excluir (4):** informe o ID e confirme com `s`.
+- **Consultar por turma (5):** busca exata, ex.: `1º Ano A`.
+- **Consultar por nascimento (6):** opção 1 = ano inteiro (ex.: `2008`); opção 2 = data exata (ex.: `2008-06-09`).
 
-- O arquivo `serviceAccountKey.json` NÃO deve ser publicado no GitHub
-- O `.gitignore` já inclui `serviceAccountKey.json` e `node_modules/`
-- Dados fictícios são utilizados nas demonstrações
+## Estrutura de dados no Firestore
 
-## Links para Entrega no Google Sala de Aula
+Coleção: `alunos`
 
-**Link do Repositório GitHub:**
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `nome` | string | Nome do aluno |
+| `turma` | string | Turma do aluno |
+| `nascimento` | timestamp | Data de nascimento |
+| `criadoEm` | timestamp | Data de criação (automática) |
+| `atualizadoEm` | timestamp | Data da última atualização (quando aplicável) |
+
+## Versão web (opcional)
+
+O arquivo `web-crud.html` usa o **Firebase Client SDK**. Para usá-lo:
+
+1. No console do Firebase, vá em **Configurações do projeto > Aplicativos da web > `</>`** e registre um aplicativo.
+2. Copie o objeto `firebaseConfig` e cole no topo do `<script>` do `web-crud.html` (substituindo os valores de exemplo).
+3. No **Firestore Database > Regras**, publique regras de teste:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+```
+
+> O Admin SDK (terminal) **não** usa essas regras: a chave de serviço já tem acesso administrativo. As regras são necessárias apenas para a versão web.
+
+## Prints para a entrega (Windows)
+
+Use o atalho **`Windows + Shift + S`**, selecione a área do terminal ou do navegador e cole no Paint/Word (Ctrl + V).
+
+Prints sugeridos:
+1. Menu `node index.js` com as opções 1 a 7.
+2. Resultado da opção 2 (lista de alunos).
+3. Resultado da opção 5 (consulta por turma).
+4. Resultado da opção 6 (consulta por data de nascimento).
+5. Interface `web-crud.html` no navegador (após configurar o `firebaseConfig`).
+
+## Entrega no Google Sala de Aula
+
+**Link do repositório:**
 https://github.com/pedrosokaua-lab/firebase-crud
 
-**Link da Aplicação Web:**
-Abra o arquivo: `web-crud.html` em qualquer navegador
+**Texto sugerido para a descrição:**
 
-**Instruções de Execução:**
-1. Terminal: `node index.js` (após `npm install`)
-2. Web: Abra `web-crud.html` no navegador (configure as credenciais Firebase)
+```
+Projeto Firebase CRUD - Operações CREATE, READ, UPDATE e DELETE de alunos
+com consultas por turma e data de nascimento, usando Firebase Admin SDK.
 
-**Prints Necessários para Entrega:**
-- Print do terminal executando `node index.js` com o menu CRUD
-- Print da interface web (`web-crud.html`) funcionando
-- Print das consultas por turma e data de nascimento
+Repositório: https://github.com/pedrosokaua-lab/firebase-crud
+
+Observação: dados fictícios foram utilizados e o arquivo
+serviceAccountKey.json não foi publicado no GitHub (protegido pelo .gitignore).
+```
+
+## Segurança
+
+- O arquivo `serviceAccountKey.json` está listado no `.gitignore` e **nunca** deve ser enviado ao GitHub.
+- Se a chave vazar, revogue-a no console do Firebase e gere uma nova.
+- Todos os alunos cadastrados são fictícios.
+
+## Solução de problemas
+
+| Sintoma | Causa provável | Solução |
+|---|---|---|
+| `node` / `npm` não reconhecido | Node.js não instalado | Instale o Node.js LTS em https://nodejs.org |
+| `Cannot find module 'firebase-admin'` | Dependências não instaladas | Execute `npm install` |
+| `Cannot find module '@google-cloud/firestore'` | Instalação incompleta | Execute `npm install` com o Node.js no PATH |
+| `serviceAccountKey.json não encontrado` | Arquivo fora da pasta | Coloque o arquivo na raiz do projeto |
+| `5 NOT_FOUND / database does not exist` | Firestore não criado | Console > Build > Firestore Database > Criar banco de dados |
+| `invalid_grant / private key` | Chave inválida ou revogada | Baixe um novo `serviceAccountKey.json` |
+| `prompt is not defined` | Versão antiga do `index.js` | Use este `index.js` (usa `readline`) |
+| Web sem conexão | `firebaseConfig` não preenchido | Configure as chaves no `web-crud.html` |
+| Web: `PERMISSION_DENIED` | Regras do Firestore | Publique as regras de teste indicadas acima |

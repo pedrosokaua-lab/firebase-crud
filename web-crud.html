@@ -1,212 +1,413 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firebase CRUD - Alunos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRUD de Alunos - Firebase</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-    .container { margin-bottom: 20px; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; }
-    .form-group input, .form-group select { padding: 8px; width: 100%; max-width: 400px; }
-    button { padding: 8px 16px; margin-right: 10px; cursor: pointer; }
-    .result { margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 4px; }
-    .aluno-card { background: #fff; padding: 10px; margin: 5px 0; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 24px;
+      color: #1f2937;
+    }
+    header { max-width: 860px; margin: 0 auto 20px; }
+    h1 { margin: 0 0 6px; font-size: 26px; }
+    header p { margin: 0; color: #6b7280; }
+    main { max-width: 860px; margin: 0 auto; display: grid; gap: 16px; }
+    section {
+      background: #fff;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    h2 { margin: 0 0 14px; font-size: 18px; }
+    .aviso {
+      max-width: 860px;
+      margin: 0 auto 16px;
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+    .aviso code {
+      background: rgba(255, 255, 255, 0.6);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 14px; margin-bottom: 4px; font-weight: 600; }
+    .form-group input {
+      width: 100%;
+      max-width: 380px;
+      padding: 9px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      background: #2563eb;
+      color: #fff;
+      border: 0;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button:hover { background: #1d4ed8; }
+    button.perigo { background: #dc2626; }
+    button.perigo:hover { background: #b91c1c; }
+    button.secundario { background: #6b7280; }
+    button.secundario:hover { background: #4b5563; }
+    .linha { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; }
+    .linha .form-group { margin-bottom: 0; }
+    .resultado { margin-top: 12px; font-size: 14px; }
+    .resultado ul { margin: 0; padding-left: 20px; }
+    .resultado li { margin: 4px 0; }
+    .card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .card-info { display: grid; gap: 3px; font-size: 14px; }
+    .card-info .id { color: #9ca3af; font-size: 12px; }
+    .card-acoes { display: flex; gap: 8px; }
+    .erro { color: #dc2626; }
+    .vazio { color: #6b7280; }
   </style>
 </head>
 <body>
-  <h1>CRUD de Alunos - Firebase</h1>
+  <header>
+    <h1>CRUD de Alunos - Firebase</h1>
+    <p>Create, Read, Update, Delete + consultas por turma e data de nascimento</p>
+  </header>
 
-  <div class="container">
-    <h2>Cadastrar Aluno</h2>
-    <div class="form-group">
-      <label>Nome:</label>
-      <input type="text" id="nome" placeholder="Nome do aluno">
-    </div>
-    <div class="form-group">
-      <label>Turma:</label>
-      <input type="text" id="turma" placeholder="Turma">
-    </div>
-    <div class="form-group">
-      <label>Data de Nascimento:</label>
-      <input type="date" id="nascimento">
-    </div>
-    <button onclick="cadastrarAluno()">Cadastrar</button>
+  <div id="aviso-config" class="aviso" hidden>
+    <strong>Configure o Firebase antes de usar esta pagina.</strong><br />
+    No console do Firebase: <code>Configuracoes do projeto &gt; Aplicativos da web &gt; &lt;/&gt;</code>,
+    registre um app e copie o objeto <code>firebaseConfig</code>.
+    Depois substitua os valores no topo do <code>&lt;script&gt;</code> deste arquivo.<br />
+    No terminal o projeto ja funciona com o Admin SDK (node index.js).
   </div>
 
-  <div class="container">
-    <h2>Listar Alunos</h2>
-    <button onclick="listarAlunos()">Atualizar Lista</button>
-    <div id="lista-alunos" class="result"></div>
-  </div>
+  <main>
+    <section>
+      <h2>Cadastrar aluno</h2>
+      <form id="form-cadastro">
+        <div class="form-group">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" placeholder="Nome do aluno" required />
+        </div>
+        <div class="form-group">
+          <label for="turma">Turma</label>
+          <input type="text" id="turma" placeholder="Ex.: 1º Ano A" required />
+        </div>
+        <div class="form-group">
+          <label for="nascimento">Data de nascimento</label>
+          <input type="date" id="nascimento" required />
+        </div>
+        <button type="submit">Cadastrar</button>
+      </form>
+    </section>
 
-  <div class="container">
-    <h2>Listar por Turma</h2>
-    <div class="form-group">
-      <label>Turma:</label>
-      <input type="text" id="turma-busca" placeholder="Turma para buscar">
-    </div>
-    <button onclick="listarPorTurma()">Buscar</button>
-    <div id="resultado-turma" class="result"></div>
-  </div>
+    <section>
+      <h2>Alunos cadastrados</h2>
+      <button id="btn-atualizar-lista" class="secundario" type="button">Atualizar lista</button>
+      <div id="lista-alunos" class="resultado">Carregando...</div>
+    </section>
 
-  <div class="container">
-    <h2>Listar por Ano de Nascimento</h2>
-    <div class="form-group">
-      <label>Ano:</label>
-      <input type="number" id="ano-busca" placeholder="Ano (YYYY)">
-    </div>
-    <button onclick="listarPorAno()">Buscar</button>
-    <div id="resultado-ano" class="result"></div>
-  </div>
+    <section>
+      <h2>Consultar por turma</h2>
+      <div class="linha">
+        <div class="form-group">
+          <label for="turma-busca">Turma</label>
+          <input type="text" id="turma-busca" placeholder="Ex.: 1º Ano A" />
+        </div>
+        <button id="btn-buscar-turma" type="button">Buscar</button>
+      </div>
+      <div id="resultado-turma" class="resultado"></div>
+    </section>
+
+    <section>
+      <h2>Consultar por data de nascimento</h2>
+      <div class="linha">
+        <div class="form-group">
+          <label for="ano-busca">Ano de nascimento</label>
+          <input type="number" id="ano-busca" placeholder="Ex.: 2008" min="1900" max="2100" />
+        </div>
+        <button id="btn-buscar-ano" type="button">Buscar</button>
+      </div>
+      <div id="resultado-ano" class="resultado"></div>
+    </section>
+  </main>
 
   <script type="module">
-    // Configuração do Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      doc,
+      updateDoc,
+      deleteDoc,
+      query,
+      where,
+      orderBy,
+      Timestamp,
+      serverTimestamp,
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ============================================================
+    // 1) COLE AQUI a configuracao do seu app web do Firebase
+    //    Console > Configuracoes do projeto > Aplicativos da web
+    // ============================================================
     const firebaseConfig = {
       apiKey: "SUA_API_KEY_AQUI",
       authDomain: "SEU_PROJETO.firebaseapp.com",
       projectId: "SEU_PROJETO",
       storageBucket: "SEU_PROJETO.appspot.com",
       messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-      appId: "SEU_APP_ID"
+      appId: "SEU_APP_ID",
     };
 
-    // Inicializar Firebase
-    import("https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js")
-      .then(() => import("https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"))
-      .then(() => {
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const alunosRef = collection(db, "alunos");
+    const configurado =
+      !firebaseConfig.apiKey.startsWith("SUA_") &&
+      !firebaseConfig.projectId.startsWith("SEU_");
 
-        // Função CREATE: Cadastrar aluno
-        async function cadastrarAluno() {
-          const nome = document.getElementById('nome').value;
-          const turma = document.getElementById('turma').value;
-          const nascimento = document.getElementById('nascimento').value;
+    if (!configurado) {
+      document.getElementById("aviso-config").hidden = false;
+    } else {
+      iniciar();
+    }
 
-          if (!nome || !turma) {
-            alert("Preencha nome e turma!");
+    function iniciar() {
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const alunosRef = collection(db, "alunos");
+
+      const escapar = (texto) =>
+        String(texto ?? "").replace(/[&<>"']/g, (c) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        }[c]));
+
+      const formatarData = (valor) => {
+        if (!valor) return "N/A";
+        try {
+          const data = valor.toDate ? valor.toDate() : new Date(valor);
+          return data.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+        } catch {
+          return "N/A";
+        }
+      };
+
+      // ---------- READ: listar alunos ----------
+      async function carregarAlunos() {
+        const lista = document.getElementById("lista-alunos");
+        lista.textContent = "Carregando...";
+
+        try {
+          const snapshot = await getDocs(query(alunosRef, orderBy("nome")));
+          if (snapshot.empty) {
+            lista.innerHTML = '<p class="vazio">Nenhum aluno cadastrado.</p>';
             return;
           }
 
+          lista.innerHTML = "";
+          snapshot.forEach((documento) => {
+            const dados = documento.data();
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML =
+              '<div class="card-info">' +
+              "<strong>" + escapar(dados.nome) + "</strong>" +
+              "<span>Turma: " + escapar(dados.turma) + "</span>" +
+              "<span>Nascimento: " + formatarData(dados.nascimento) + "</span>" +
+              '<span class="id">ID: ' + documento.id + "</span>" +
+              "</div>" +
+              '<div class="card-acoes">' +
+              '<button type="button" data-acao="editar">Editar</button>' +
+              '<button type="button" class="perigo" data-acao="excluir">Excluir</button>' +
+              "</div>";
+
+            card
+              .querySelector('[data-acao="editar"]')
+              .addEventListener("click", () => editarAluno(documento.id, dados));
+            card
+              .querySelector('[data-acao="excluir"]')
+              .addEventListener("click", () => excluirAluno(documento.id, dados.nome));
+
+            lista.appendChild(card);
+          });
+        } catch (erro) {
+          lista.innerHTML = '<p class="erro">Erro ao listar: ' + escapar(erro.message) + "</p>";
+        }
+      }
+
+      // ---------- CREATE: cadastrar aluno ----------
+      async function cadastrarAluno(evento) {
+        evento.preventDefault();
+
+        const nome = document.getElementById("nome").value.trim();
+        const turma = document.getElementById("turma").value.trim();
+        const nascimento = document.getElementById("nascimento").value;
+
+        if (!nome || !turma || !nascimento) {
+          alert("Preencha nome, turma e data de nascimento.");
+          return;
+        }
+
+        try {
           await addDoc(alunosRef, {
             nome,
             turma,
-            nascimento: nascimento ? new Date(nascimento) : admin.firestore.FieldValue.serverTimestamp(),
-            criadoEm: serverTimestamp()
+            nascimento: Timestamp.fromDate(new Date(nascimento + "T00:00:00Z")),
+            criadoEm: serverTimestamp(),
           });
-
+          document.getElementById("form-cadastro").reset();
+          await carregarAlunos();
           alert("Aluno cadastrado com sucesso!");
-          document.getElementById('nome').value = "";
-          document.getElementById('turma').value = "";
-          document.getElementById('nascimento').value = "";
-          listarAlunos();
+        } catch (erro) {
+          alert("Erro ao cadastrar: " + erro.message);
+        }
+      }
+
+      // ---------- UPDATE: atualizar aluno ----------
+      async function editarAluno(id, dados) {
+        const novoNome = prompt("Novo nome:", dados.nome);
+        if (novoNome === null) return;
+
+        const novaTurma = prompt("Nova turma:", dados.turma);
+        if (novaTurma === null) return;
+
+        try {
+          await updateDoc(doc(db, "alunos", id), {
+            nome: novoNome.trim() || dados.nome,
+            turma: novaTurma.trim() || dados.turma,
+            atualizadoEm: serverTimestamp(),
+          });
+          await carregarAlunos();
+        } catch (erro) {
+          alert("Erro ao atualizar: " + erro.message);
+        }
+      }
+
+      // ---------- DELETE: excluir aluno ----------
+      async function excluirAluno(id, nome) {
+        if (!confirm('Excluir o aluno "' + nome + '"?')) return;
+        try {
+          await deleteDoc(doc(db, "alunos", id));
+          await carregarAlunos();
+        } catch (erro) {
+          alert("Erro ao excluir: " + erro.message);
+        }
+      }
+
+      // ---------- Consulta por turma ----------
+      async function buscarPorTurma() {
+        const turma = document.getElementById("turma-busca").value.trim();
+        const resultado = document.getElementById("resultado-turma");
+
+        if (!turma) {
+          alert("Digite a turma.");
+          return;
         }
 
-        // Função READ: Listar alunos
-        async function listarAlunos() {
-          const lista = document.getElementById('lista-alunos');
-          lista.innerHTML = "";
-
-          try {
-            const snapshot = await getDocs(alunosRef);
-            if (snapshot.empty) {
-              lista.innerHTML = "Nenhum aluno encontrado.";
-              return;
-            }
-
-            snapshot.forEach((doc) => {
-              const data = doc.data();
-              const nascimentoDate = data.nascimento ? data.nascimento.toDate() : null;
-              const card = document.createElement('div');
-              card.className = 'aluno-card';
-              card.innerHTML = `
-                <strong>ID:</strong> ${doc.id}<br>
-                <strong>Nome:</strong> ${data.nome}<br>
-                <strong>Turma:</strong> ${data.turma}<br>
-                <strong>Nascimento:</strong> ${nascimentoDate ? nascimentoDate.toLocaleDateString() : "N/A"}
-              `;
-              lista.appendChild(card);
-            });
-          } catch (error) {
-            lista.innerHTML = "Erro ao listar: " + error.message;
-          }
-        }
-
-        // Função: Listar alunos por turma
-        async function listarPorTurma() {
-          const turma = document.getElementById('turma-busca').value;
-          const resultado = document.getElementById('resultado-turma');
-          resultado.innerHTML = "";
-
-          if (!turma) {
-            alert("Digite o nome da turma!");
+        resultado.textContent = "Carregando...";
+        try {
+          const snapshot = await getDocs(query(alunosRef, where("turma", "==", turma)));
+          if (snapshot.empty) {
+            resultado.innerHTML = '<p class="vazio">Nenhum aluno nesta turma.</p>';
             return;
           }
+          resultado.innerHTML =
+            "<ul>" +
+            snapshot.docs
+              .map(
+                (d) =>
+                  "<li>" +
+                  escapar(d.data().nome) +
+                  " - " +
+                  formatarData(d.data().nascimento) +
+                  "</li>"
+              )
+              .join("") +
+            "</ul>";
+        } catch (erro) {
+          resultado.innerHTML = '<p class="erro">Erro: ' + escapar(erro.message) + "</p>";
+        }
+      }
 
-          try {
-            const snapshot = await getDocs(query(alunosRef, where("turma", "==", turma)));
-            if (snapshot.empty) {
-              resultado.innerHTML = "Nenhum aluno encontrado nesta turma.";
-              return;
-            }
+      // ---------- Consulta por data de nascimento (ano) ----------
+      async function buscarPorAno() {
+        const ano = Number(document.getElementById("ano-busca").value);
+        const resultado = document.getElementById("resultado-ano");
 
-            let html = `<strong>Alunos da turma ${turma}:</strong><br><br>`;
-            snapshot.forEach((doc) => {
-              const data = doc.data();
-              const nascimentoDate = data.nascimento ? data.nascimento.toDate() : null;
-              html += `- ${data.nome} (${nascimentoDate ? nascimentoDate.toLocaleDateString() : "N/A"})<br>`;
-            });
-            resultado.innerHTML = html;
-          } catch (error) {
-            resultado.innerHTML = "Erro ao buscar: " + error.message;
-          }
+        if (!ano || ano < 1900) {
+          alert("Digite um ano valido.");
+          return;
         }
 
-        // Função: Listar alunos por ano de nascimento
-        async function listarPorAno() {
-          const ano = document.getElementById('ano-busca').value;
-          const resultado = document.getElementById('resultado-ano');
-          resultado.innerHTML = "";
-
-          if (!ano) {
-            alert("Digite um ano!");
-            return;
-          }
-
-          try {
-            const snapshot = await getDocs(query(
+        resultado.textContent = "Carregando...";
+        try {
+          const snapshot = await getDocs(
+            query(
               alunosRef,
-              where("nascimento", ">=", new Date(`${ano}-01-01`)),
-              where("nascimento", "<=", new Date(`${ano}-12-31`))
-            ));
+              where("nascimento", ">=", Timestamp.fromDate(new Date(Date.UTC(ano, 0, 1)))),
+              where(
+                "nascimento",
+                "<=",
+                Timestamp.fromDate(new Date(Date.UTC(ano, 11, 31, 23, 59, 59)))
+              )
+            )
+          );
 
-            if (snapshot.empty) {
-              resultado.innerHTML = "Nenhum aluno encontrado no ano de " + ano + ".";
-              return;
-            }
-
-            let html = `<strong>Alunos nascidos em ${ano}:</strong><br><br>`;
-            snapshot.forEach((doc) => {
-              const data = doc.data();
-              const nascimentoDate = data.nascimento.toDate();
-              html += `- ${data.nome} (${nascimentoDate.toLocaleDateString()})<br>`;
-            });
-            resultado.innerHTML = html;
-          } catch (error) {
-            resultado.innerHTML = "Erro ao buscar: " + error.message;
+          if (snapshot.empty) {
+            resultado.innerHTML =
+              '<p class="vazio">Nenhum aluno nascido em ' + ano + ".</p>";
+            return;
           }
-        }
 
-        // Carregar alunos ao inicializar
-        listarAlunos();
-      })
-      .catch((error) => {
-        console.error("Erro ao carregar Firebase: ", error);
-        alert("Erro ao inicializar Firebase. Verifique a configuração.");
-      });
+          resultado.innerHTML =
+            "<ul>" +
+            snapshot.docs
+              .map(
+                (d) =>
+                  "<li>" +
+                  escapar(d.data().nome) +
+                  " - " +
+                  formatarData(d.data().nascimento) +
+                  "</li>"
+              )
+              .join("") +
+            "</ul>";
+        } catch (erro) {
+          resultado.innerHTML = '<p class="erro">Erro: ' + escapar(erro.message) + "</p>";
+        }
+      }
+
+      // ---------- Eventos ----------
+      document.getElementById("form-cadastro").addEventListener("submit", cadastrarAluno);
+      document.getElementById("btn-atualizar-lista").addEventListener("click", carregarAlunos);
+      document.getElementById("btn-buscar-turma").addEventListener("click", buscarPorTurma);
+      document.getElementById("btn-buscar-ano").addEventListener("click", buscarPorAno);
+
+      carregarAlunos();
+    }
   </script>
 </body>
 </html>
