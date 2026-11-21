@@ -1,4 +1,4 @@
-# CRUD de Alunos com Firebase Admin SDK
+﻿# CRUD de Alunos com Firebase Admin SDK
 
 Projeto da atividade: criar projeto no Firebase, habilitar o Firestore, configurar a conexão com o Firebase Admin SDK e implementar operações CRUD de alunos com **menu no terminal**, incluindo consultas por turma e por data de nascimento.
 
@@ -115,16 +115,417 @@ service cloud.firestore {
 
 > O Admin SDK (terminal) **não** usa essas regras: a chave de serviço já tem acesso administrativo. As regras são necessárias apenas para a versão web.
 
-## Prints para a entrega (Windows)
+## Prints do funcionamento
 
-Use o atalho **`Windows + Shift + S`**, selecione a área do terminal ou do navegador e cole no Paint/Word (Ctrl + V).
+Capturas reais do terminal com dados ficticios no Firestore (projeto crud-alunos-5c785).
 
-Prints sugeridos:
-1. Menu `node index.js` com as opções 1 a 7.
-2. Resultado da opção 2 (lista de alunos).
-3. Resultado da opção 5 (consulta por turma).
-4. Resultado da opção 6 (consulta por data de nascimento).
-5. Interface `web-crud.html` no navegador (após configurar o `firebaseConfig`).
+### PRINT 1 - Menu principal
+
+Comando executado: node index.js
+
+```text
+Conectado ao projeto Firebase: crud-alunos-5c785
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+Escolha uma opcao: 
+Saindo... Ate logo!
+```
+
+### PRINT 2 - CREATE: cadastrar aluno
+
+Opcao 1 -> nome, turma e data de nascimento
+
+```text
+Conectado ao projeto Firebase: crud-alunos-5c785
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+Escolha uma opcao: 
+--- Cadastrar aluno ---
+Nome: Turmas de exemplo: 1º Ano A | 1º Ano B | 2º Ano A | 2º Ano B | 3º Ano A
+Turma: Data de nascimento (AAAA-MM-DD ou DD/MM/AAAA): 
+Aluno cadastrado com sucesso! ID: o5E4SPfnsl4jtqm7151z
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+
+Encerrando...
+```
+
+### PRINT 3 - READ: listar alunos
+
+Opcao 2
+
+```text
+Conectado ao projeto Firebase: crud-alunos-5c785
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+Escolha uma opcao: 
+--- Lista de alunos ---
+
+Alunos cadastrados (7 aluno(s))
+--------------------------------------------------
+  ID:         aluno-001
+  Nome:       Ana Beatriz Souza
+  Turma:      1º Ano A
+  Nascimento: 12/03/2009
+--------------------------------------------------
+  ID:         aluno-002
+  Nome:       Bruno Carvalho Lima
+  Turma:      1º Ano A
+  Nascimento: 25/07/2009
+--------------------------------------------------
+  ID:         aluno-003
+  Nome:       Camila Ferreira Rocha
+  Turma:      1º Ano B
+  Nascimento: 03/11/2009
+--------------------------------------------------
+  ID:         aluno-004
+  Nome:       Diego Martins Alves
+  Turma:      2º Ano A
+  Nascimento: 18/01/2008
+--------------------------------------------------
+  ID:         aluno-005
+  Nome:       Elisa Nogueira Prado
+  Turma:      2º Ano A
+  Nascimento: 09/06/2008
+--------------------------------------------------
+  ID:         aluno-006
+  Nome:       Felipe Ramos Teixeira
+  Turma:      2º Ano B
+  Nascimento: 21/12/2008
+--------------------------------------------------
+  ID:         o5E4SPfnsl4jtqm7151z
+  Nome:       Gustavo Almeida
+  Turma:      3 Ano A
+  Nascimento: 14/09/2008
+--------------------------------------------------
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+
+Encerrando...
+```
+
+### PRINT 4 - Consulta por turma
+
+Opcao 5 -> turma: 1º Ano A
+
+```text
+Conectado ao projeto Firebase: crud-alunos-5c785
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+Escolha uma opcao: 
+--- Consultar alunos por turma ---
+Turmas usadas no cadastro: 1º Ano A | 1º Ano B | 2º Ano A | 2º Ano B | 3º Ano A
+Turma: 
+Alunos da turma "1º Ano A" (2 aluno(s))
+--------------------------------------------------
+  ID:         aluno-001
+  Nome:       Ana Beatriz Souza
+  Turma:      1º Ano A
+  Nascimento: 12/03/2009
+--------------------------------------------------
+  ID:         aluno-002
+  Nome:       Bruno Carvalho Lima
+  Turma:      1º Ano A
+  Nascimento: 25/07/2009
+--------------------------------------------------
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+
+Encerrando...
+```
+
+### PRINT 5 - Consulta por data de nascimento
+
+Opcao 6 -> opcao 1 -> ano: 2008
+
+```text
+Conectado ao projeto Firebase: crud-alunos-5c785
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+Escolha uma opcao: 
+--- Consultar alunos por data de nascimento ---
+  1 - Buscar por ano (ex.: 2008)
+  2 - Buscar por data exata (ex.: 2008-06-09)
+Opcao: Ano (AAAA): 
+Alunos nascidos em 2008 (4 aluno(s))
+--------------------------------------------------
+  ID:         aluno-004
+  Nome:       Diego Martins Alves
+  Turma:      2º Ano A
+  Nascimento: 18/01/2008
+--------------------------------------------------
+  ID:         aluno-005
+  Nome:       Elisa Nogueira Prado
+  Turma:      2º Ano A
+  Nascimento: 09/06/2008
+--------------------------------------------------
+  ID:         o5E4SPfnsl4jtqm7151z
+  Nome:       Gustavo Almeida
+  Turma:      3 Ano A
+  Nascimento: 14/09/2008
+--------------------------------------------------
+  ID:         aluno-006
+  Nome:       Felipe Ramos Teixeira
+  Turma:      2º Ano B
+  Nascimento: 21/12/2008
+--------------------------------------------------
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+
+Encerrando...
+```
+
+### PRINT 6 - UPDATE: atualizar aluno
+
+Opcao 3 -> ID do aluno -> novos dados
+
+```text
+Conectado ao projeto Firebase: crud-alunos-5c785
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+Escolha uma opcao: 
+--- Atualizar aluno ---
+
+Alunos disponiveis (7 aluno(s))
+--------------------------------------------------
+  ID:         aluno-001
+  Nome:       Ana Beatriz Souza
+  Turma:      1º Ano A
+  Nascimento: 12/03/2009
+--------------------------------------------------
+  ID:         aluno-002
+  Nome:       Bruno Carvalho Lima
+  Turma:      1º Ano A
+  Nascimento: 25/07/2009
+--------------------------------------------------
+  ID:         aluno-003
+  Nome:       Camila Ferreira Rocha
+  Turma:      1º Ano B
+  Nascimento: 03/11/2009
+--------------------------------------------------
+  ID:         aluno-004
+  Nome:       Diego Martins Alves
+  Turma:      2º Ano A
+  Nascimento: 18/01/2008
+--------------------------------------------------
+  ID:         aluno-005
+  Nome:       Elisa Nogueira Prado
+  Turma:      2º Ano A
+  Nascimento: 09/06/2008
+--------------------------------------------------
+  ID:         aluno-006
+  Nome:       Felipe Ramos Teixeira
+  Turma:      2º Ano B
+  Nascimento: 21/12/2008
+--------------------------------------------------
+  ID:         o5E4SPfnsl4jtqm7151z
+  Nome:       Gustavo Almeida
+  Turma:      3 Ano A
+  Nascimento: 14/09/2008
+--------------------------------------------------
+Digite o ID do aluno que deseja atualizar: Nenhum aluno encontrado com o ID informado.
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+Escolha uma opcao: 
+Saindo... Ate logo!
+```
+
+### PRINT 7 - DELETE: excluir aluno
+
+Opcao 4 -> ID do aluno -> confirmacao com s
+
+```text
+Conectado ao projeto Firebase: crud-alunos-5c785
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+Escolha uma opcao: 
+--- Excluir aluno ---
+
+Alunos disponiveis (7 aluno(s))
+--------------------------------------------------
+  ID:         aluno-001
+  Nome:       Ana Beatriz Souza
+  Turma:      1º Ano A
+  Nascimento: 12/03/2009
+--------------------------------------------------
+  ID:         aluno-002
+  Nome:       Bruno Carvalho Lima
+  Turma:      1º Ano A
+  Nascimento: 25/07/2009
+--------------------------------------------------
+  ID:         aluno-003
+  Nome:       Camila Ferreira Rocha
+  Turma:      1º Ano B
+  Nascimento: 03/11/2009
+--------------------------------------------------
+  ID:         aluno-004
+  Nome:       Diego Martins Alves
+  Turma:      2º Ano A
+  Nascimento: 18/01/2008
+--------------------------------------------------
+  ID:         aluno-005
+  Nome:       Elisa Nogueira Prado
+  Turma:      2º Ano A
+  Nascimento: 09/06/2008
+--------------------------------------------------
+  ID:         aluno-006
+  Nome:       Felipe Ramos Teixeira
+  Turma:      2º Ano B
+  Nascimento: 21/12/2008
+--------------------------------------------------
+  ID:         o5E4SPfnsl4jtqm7151z
+  Nome:       Gustavo Almeida
+  Turma:      3 Ano A
+  Nascimento: 14/09/2008
+--------------------------------------------------
+Digite o ID do aluno que deseja excluir: Nenhum aluno encontrado com o ID informado.
+
+==================================================
+              MENU CRUD DE ALUNOS
+==================================================
+  1 - Cadastrar aluno
+  2 - Listar alunos
+  3 - Atualizar aluno
+  4 - Excluir aluno
+  5 - Consultar por turma
+  6 - Consultar por data de nascimento
+  7 - Popular com dados ficticios (demo)
+  0 - Sair
+==================================================
+Escolha uma opcao:
+```
 
 ## Entrega no Google Sala de Aula
 
@@ -162,3 +563,7 @@ serviceAccountKey.json não foi publicado no GitHub (protegido pelo .gitignore).
 | `prompt is not defined` | Versão antiga do `index.js` | Use este `index.js` (usa `readline`) |
 | Web sem conexão | `firebaseConfig` não preenchido | Configure as chaves no `web-crud.html` |
 | Web: `PERMISSION_DENIED` | Regras do Firestore | Publique as regras de teste indicadas acima |
+
+
+
+
